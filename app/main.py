@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from sqlalchemy import Engine
 from app.routers import users
 
 from app.database.database import Engine, Base
@@ -14,3 +15,5 @@ app.include_router(users.router)
 @app.get("/")
 def home():
     return {"mensagem": "API funcionando!"}
+
+#uvicorn app.main:app
