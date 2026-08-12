@@ -3,10 +3,12 @@ from pydantic import BaseModel, ConfigDict
 class DriverCreate(BaseModel):
     nome: str
     email: str
+    senha: str
 
 class DriverUpdate(BaseModel):
     nome: str
     email: str
+    senha: str
 
 class DriverResponse(BaseModel):
     id: int

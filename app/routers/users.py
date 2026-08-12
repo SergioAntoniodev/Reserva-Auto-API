@@ -4,6 +4,7 @@ from typing import List
 from app.database.database import get_db
 from app.models.driver import Driver
 from app.schemas.driver import DriverCreate, DriverResponse, DriverUpdate
+from app.services.security import criar_hash_senha
 
 router = APIRouter()
 
@@ -60,8 +61,8 @@ def deletar_usuario(driver_id: int,
 def criar_driver(driver: DriverCreate, db: Session = Depends(get_db)):
     novo_driver = Driver(
         nome=driver.nome,
-        email=driver.email
-    )
+        email=driver.email,
+        senha_hash=criar_hash_senha(driver.senha)    )
 
     db.add(novo_driver)
 
