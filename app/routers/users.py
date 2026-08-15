@@ -4,17 +4,17 @@ from typing import List
 from app.database.database import get_db
 from app.models.driver import Driver
 from app.schemas.driver import DriverCreate, DriverResponse, DriverUpdate
-from app.services.security import criar_hash_senha
+from app.services.security import criar_hash_senha, get_current_driver
 
 router = APIRouter()
 
 @router.get("/users", response_model=List[DriverResponse])
-def listar_usuarios(db: Session = Depends(get_db)):
+def listar_usuarios(db: Session = Depends(get_db), current_driver: Driver = Depends(get_current_driver)): #Para executar essa função, primeiro descubra quem é o motorista autenticado.
     drivers = db.query(Driver).all()
     return drivers
 
 @router.get("/users/{id}", response_model=DriverResponse)
-def buscar_usuario(id: int, db: Session = Depends(get_db)):
+def buscar_usuario(id: int, db: Session = Depends(get_db), current_driver: Driver = Depends(get_current_driver)):
     driver = db.query(Driver).filter(Driver.id == id).first()
     if driver is None:
         raise HTTPException(
@@ -27,7 +27,8 @@ def buscar_usuario(id: int, db: Session = Depends(get_db)):
 def atualizar_usuario(
     driver_id: int,
     driver_update: DriverUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_driver: Driver = Depends(get_current_driver)
 ): 
     driver = db.query(Driver).filter(Driver.id == driver_id).first()
     if driver is None:
@@ -44,8 +45,9 @@ def atualizar_usuario(
     return driver
 
 @router.delete("/users/{driver_id}")
-def deletar_usuario(driver_id: int,
-                    db: Session = Depends(get_db)):
+def deletar_usuario(driver_id: int, 
+        db: Session = Depends(get_db),
+        current_driver: Driver = Depends(get_current_driver)):
     driver = db.query(Driver).filter(Driver.id == driver_id).first()
 
     if driver is None:

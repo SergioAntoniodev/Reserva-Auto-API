@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.database.database import get_db
 from app.models.driver import Driver
 from app.schemas.auth import LoginRequest, TokenResponse
-from app.services.security import verificar_senha
+from app.services.security import verificar_senha, criar_access_token
 
 router = APIRouter()
 
@@ -20,7 +20,9 @@ def login(dados: LoginRequest, db: Session = Depends(get_db)):
     if not senha_correta:
         raise HTTPException(status_code=401, detail="Email ou senha inválidos")
 
+    access_token = criar_access_token(data={"sub": str(driver.id)})
+
     return {
-        "access_token": "teste",
+        "access_token": access_token,
         "token_type": "bearer"
     }

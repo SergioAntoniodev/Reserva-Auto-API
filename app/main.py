@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from sqlalchemy import Engine
 from app.routers import users, auth
 from app.database.database import Engine, Base
 from app.models.driver import Driver
+from app.models.Vehicle import Vehicle
 
 app = FastAPI()
 
