@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import users, auth
+from app.routers import users, auth, vehicles
 from app.database.database import Engine, Base
 from app.models.driver import Driver
 from app.models.Vehicle import Vehicle
@@ -11,8 +11,7 @@ Base.metadata.create_all(bind=Engine)
 
 app.include_router(users.router)
 app.include_router(auth.router)
+app.include_router(vehicles.router)
 @app.get("/")
 def home():
     return {"mensagem": "API funcionando!"}
-
-#uvicorn app.main:app
