@@ -1,53 +1,241 @@
-Reserva Auto API
+# Reserva Auto API
 
-API REST desenvolvida com **FastAPI** para ajudar motoristas de aplicativo a criarem uma reserva financeira destinada à manutenção do veículo.
+API REST desenvolvida com **Python e FastAPI** para gerenciamento de motoristas e veículos, com autenticação JWT e integração com PostgreSQL.
+
+O projeto está sendo desenvolvido como parte do meu portfólio de **Backend Development**, com foco em construção de APIs, autenticação, banco de dados, regras de negócio e boas práticas de desenvolvimento.
 
 ## Objetivo
 
-Muitos motoristas de aplicativo acabam adiando manutenções por falta de planejamento financeiro.
-Este projeto busca resolver esse problema permitindo que o motorista organize uma reserva destinada exclusivamente à manutenção do carro.
+A Reserva Auto API tem como objetivo servir como backend para um sistema de gerenciamento de veículos, permitindo que motoristas cadastrem e gerenciem seus veículos de forma segura através de uma API REST.
 
-## Tecnologias
+O projeto também será evoluído para incluir funcionalidades relacionadas a **manutenção e reserva de veículos**.
 
-- Python
-- FastAPI
-- Pydantic
-- SQLAlchemy (em desenvolvimento)
-- PostgreSQL (em desenvolvimento)
+---
 
-## Funcionalidades atuais
+## Tecnologias utilizadas
 
-- Cadastro de motoristas
-- Validação de dados com Pydantic
-- Documentação automática com Swagger
+* **Python**
+* **FastAPI**
+* **SQLAlchemy**
+* **PostgreSQL**
+* **Pydantic**
+* **JWT**
+* **pwdlib**
+* **Git**
+* **GitHub**
+* **Swagger / OpenAPI**
 
-## Próximas funcionalidades
+---
 
-- Login com JWT
-- Banco de dados PostgreSQL
-- Metas de economia
-- Histórico de depósitos
-- Controle de manutenção
-- Integração com PIX
-- Dashboard financeiro
+## Autenticação
 
-## Como executar
+A API utiliza **JWT (JSON Web Token)** para autenticação.
 
-```bash
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+O fluxo funciona da seguinte forma:
+
+```text
+Login
+  ↓
+Email + senha
+  ↓
+Validação da senha
+  ↓
+JWT
+  ↓
+Token Bearer
+  ↓
+Acesso aos endpoints protegidos
 ```
 
-Acesse:
+Os endpoints protegidos utilizam o usuário autenticado para identificar o motorista responsável pelos recursos.
 
+---
+
+## Motoristas
+
+O sistema possui CRUD de motoristas.
+
+### Funcionalidades
+
+* Cadastro de motorista
+* Listagem de motoristas
+* Busca de motorista
+* Atualização de motorista
+* Exclusão de motorista
+* Senhas armazenadas utilizando hash
+* Autenticação através de JWT
+
+---
+
+## Veículos
+
+Foi implementado o CRUD completo de veículos.
+
+### Funcionalidades
+
+* Cadastro de veículo
+* Listagem dos veículos do motorista autenticado
+* Atualização de veículo
+* Exclusão de veículo
+* Associação automática do veículo ao motorista autenticado
+
+### Dados do veículo
+
+Cada veículo possui:
+
+```text
+id
+marca
+modelo
+ano
+placa
+quilometragem
+driver_id
 ```
+
+### Regra de negócio
+
+O `driver_id` não precisa ser informado pelo usuário durante o cadastro.
+
+A API identifica o motorista através do JWT:
+
+```text
+JWT
+ ↓
+get_current_driver()
+ ↓
+current_driver.id
+ ↓
+Vehicle.driver_id
+```
+
+Isso garante que cada motorista trabalhe apenas com seus próprios veículos.
+
+---
+
+## Estrutura do projeto
+
+```text
+Reserva-Auto-API/
+│
+├── app/
+│   ├── database/
+│   │   └── database.py
+│   │
+│   ├── models/
+│   │   ├── driver.py
+│   │   └── Vehicle.py
+│   │
+│   ├── routers/
+│   │   ├── auth.py
+│   │   ├── users.py
+│   │   └── vehicles.py
+│   │
+│   ├── schemas/
+│   │   ├── auth.py
+│   │   ├── driver.py
+│   │   └── vehicle.py
+│   │
+│   ├── services/
+│   │   └── security.py
+│   │
+│   └── main.py
+│
+├── .gitignore
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## Endpoints atuais
+
+### Autenticação
+
+| Método | Endpoint | Descrição                     |
+| ------ | -------- | ----------------------------- |
+| POST   | `/login` | Autenticação e geração do JWT |
+
+### Motoristas
+
+| Método | Endpoint             | Descrição           |
+| ------ | -------------------- | ------------------- |
+| POST   | `/users`             | Criar motorista     |
+| GET    | `/users`             | Listar motoristas   |
+| GET    | `/users/{id}`        | Buscar motorista    |
+| PUT    | `/users/{driver_id}` | Atualizar motorista |
+| DELETE | `/users/{driver_id}` | Excluir motorista   |
+
+### Veículos
+
+| Método | Endpoint                 | Descrição                    |
+| ------ | ------------------------ | ---------------------------- |
+| POST   | `/vehicles/`             | Criar veículo                |
+| GET    | `/vehicles/`             | Listar veículos do motorista |
+| PUT    | `/vehicles/{vehicle_id}` | Atualizar veículo            |
+| DELETE | `/vehicles/{vehicle_id}` | Excluir veículo              |
+
+---
+
+## Testes da API
+
+Os endpoints podem ser testados através da documentação interativa gerada automaticamente pelo FastAPI:
+
+```text
 http://127.0.0.1:8000/docs
 ```
 
-## Status
+O Swagger permite realizar autenticação utilizando o token JWT e testar os endpoints protegidos.
 
-Projeto em desenvolvimento.
+---
 
-## Autor
+## Próximos passos
 
-Sérgio Antônio da Silva Filho
+O projeto continua em desenvolvimento.
+
+### Roadmap
+
+* [x] Configuração do FastAPI
+* [x] Integração com PostgreSQL
+* [x] Configuração do SQLAlchemy
+* [x] CRUD de motoristas
+* [x] Hash de senhas
+* [x] Autenticação JWT
+* [x] CRUD de veículos
+* [x] Associação entre motorista e veículo
+* [ ] Cadastro de manutenções
+* [ ] Histórico de manutenção dos veículos
+* [ ] Sistema de reservas
+* [ ] Regras de negócio para reservas
+* [ ] Testes automatizados
+* [ ] Docker
+* [ ] Deploy em cloud
+
+---
+
+## Objetivo do projeto
+
+Este projeto faz parte da minha evolução no desenvolvimento **Backend com Python**, colocando em prática conceitos de:
+
+* Desenvolvimento de APIs REST
+* Autenticação e segurança
+* Bancos de dados relacionais
+* ORM
+* Validação de dados
+* Relacionamento entre entidades
+* CRUD
+* Regras de negócio
+* Git e GitHub
+* Documentação de APIs
+
+O objetivo é evoluir continuamente a aplicação, adicionando novas funcionalidades e aplicando conceitos utilizados no desenvolvimento backend profissional.
+
+---
+
+## Desenvolvedor
+
+**Sérgio Antônio da Silva**
+
+Estudante de Análise e Desenvolvimento de Sistemas e desenvolvedor focado em Backend.
+
+**Tecnologias:** Python • FastAPI • SQLAlchemy • PostgreSQL • SQL • Git • GitHub
